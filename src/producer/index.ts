@@ -19,12 +19,28 @@ app.use((req, res, next) => {
   req.producer = producer;
   return next();
 });
-app.get("/", async (req, res) => {
-  await req.producer.send({
-    topic: "topic-test",
-    messages: [{ value: "Hello Kafka!" }],
-  });
-  res.json("Hello World!");
+app.use(express.json());
+app.post("/sendMail", async (req, res) => {
+  const { to, from, subject, text } = req.body;
+  try {
+    await req.producer.send({
+      topic: "topic-test",
+      compression: CompressionTypes.GZIP,
+      messages: [
+        {
+          value: JSON.stringify({
+            to,
+            from,
+            subject,
+            text,
+          }),
+        },
+      ],
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    res.json({ ok: false });
+  }
 });
 
 async function run() {

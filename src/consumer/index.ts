@@ -1,4 +1,5 @@
 import { Kafka, logLevel } from "kafkajs";
+import { transport } from "./config/mail";
 
 const kafka = new Kafka({
   clientId: "my-consumer",
@@ -17,8 +18,13 @@ async function main() {
 
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
-      console.log({
-        value: message.value.toString(),
+      const { to, from, subject, text } = JSON.parse(message.value.toString());
+
+      await transport.sendMail({
+        from,
+        to,
+        subject,
+        text,
       });
     },
   });
