@@ -45,7 +45,7 @@ npm run consumer //start consumer service
 }
 ```
 
-# Contributing
+## CONTRIBUTING
 
 1. Fork this repository;
 2. Create your feature branch: `git checkout -b new-feature`;
